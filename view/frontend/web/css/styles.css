@@ -1,0 +1,27 @@
+.conotoxia-success-container {
+    width: auto;
+    display: flex;
+}
+
+.conotoxia-payment-status-box {
+    border: 1px solid #d3dce3;
+    box-shadow: 0 2px 0 0 rgba(211, 220, 227, .6);
+    background: #fff;
+    padding: 40px 40px;
+    margin: 20px auto;
+    transition: background-color .1s linear, border-color .1s linear;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.conotoxia-success-logo {
+    margin: auto;
+    text-align: center;
+}
+
+.message.conotoxia-message {
+    margin: 0;
+    text-align: center;
+    padding-left: inherit;
+    padding-right: inherit;
+}

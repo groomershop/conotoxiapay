@@ -1,0 +1,50 @@
+<!--
+/**
+ * Template for Conotoxia Pay payment method in checkout view
+ */
+-->
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"
+               name="payment[method]"
+               type="radio"/>
+        <label class="label" data-bind="attr: {'for': getCode()}">
+            <img alt="ConotoxiaPayLogo"
+                 class="payment-icon"
+                 data-bind="attr: {src: getConotoxiaPayLogo(), alt: $t('Conotoxia Pay Logo')}, visible: isConotoxiaPayIconEnabled()"
+                 style="max-height: 1.7em"/>
+            <span data-bind="i18n: 'Pay conveniently online with Conotoxia Pay'"></span>
+        </label>
+        <div data-bind="foreach: { data: getPaymentMethodIcons(), as: 'paymentMethod' }"
+             style="display: flex; flex-wrap: wrap; column-gap: 10px; margin-left: 22px">
+            <img data-bind="attr: {src: paymentMethod.icon, alt: $t('Payment method icon')}"
+                 style="max-height: 3.4em; margin-top:0.5em"/>
+        </div>
+    </div>
+
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+        </div>
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order')}
+                        "
+                        type="submit">
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

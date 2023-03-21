@@ -1,0 +1,10 @@
+<?php
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\Escaper;
+
+?>
+
+<?= $escaper->escapeHtml($block->getData('message'), ['a']); ?>

@@ -1,0 +1,25 @@
+/**
+ * Custom styles for admin layout
+ */
+.conotoxia-pay-section .heading {
+    background: url(images/pay_logo.svg) no-repeat 0 / 18rem;
+    height: auto;
+    width: auto;
+    padding-left: 20rem;
+    vertical-align: middle;
+}
+
+.conotoxia-pay-section .heading-intro {
+    display: inline-block;
+    vertical-align: middle;
+    width: 54%
+}
+
+.conotoxia-pay-section .button-container {
+    float: right;
+}
+
+.conotoxia-pay-generation-success-message {
+    background: none;
+    margin: 0;
+}

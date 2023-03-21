@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Conotoxia_Pay::css/styles.css"/>
+    </head>
+    <body>
+        <referenceContainer name="order.success.additional.info">
+            <block class="Conotoxia\Pay\Block\Checkout\Onepage\Success\Success"
+                   name="conotoxia.pay.onepage.success"
+                   template="Conotoxia_Pay::checkout/onepage/success/success_page.phtml"
+                   cacheable="false"
+                   after="-"
+            />
+        </referenceContainer>
+    </body>
+</page>

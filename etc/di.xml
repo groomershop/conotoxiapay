@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Global configuration for Conotoxia Pay dependency injection
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Conotoxia\Pay\Api\Definitions" type="Conotoxia\Pay\Model\Configuration"/>
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="ConotoxiaPayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Conotoxia\Pay\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">ConotoxiaPayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">ConotoxiaPayCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Secure sensitive data from dumping -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="payment/conotoxia_pay/client_secret" xsi:type="string">1</item>
+                <item name="payment/conotoxia_pay/private_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Configuration reader -->
+    <virtualType name="ConotoxiaPayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\Conotoxia\Pay\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="ConotoxiaPayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">ConotoxiaPayAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">ConotoxiaPayCaptureCommand</item>
+                <item name="refund" xsi:type="string">ConotoxiaPaymentGatewayRefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund command -->
+    <virtualType name="ConotoxiaPaymentGatewayRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="client" xsi:type="object">Conotoxia\Pay\Gateway\Http\Client\RefundClient</argument>
+            <argument name="requestBuilder" xsi:type="object">Conotoxia\Pay\Gateway\Request\RefundRequest</argument>
+            <argument name="handler" xsi:type="object">Conotoxia\Pay\Gateway\Request\TxnIdRefundHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Conotoxia\Pay\Gateway\Http\TransferFactory</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="ConotoxiaPayAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">ConotoxiaPayAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">ConotoxiaPayResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Conotoxia\Pay\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Conotoxia\Pay\Gateway\Http\Client\ConotoxiaClient</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorization Request -->
+    <virtualType name="ConotoxiaPayAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">Conotoxia\Pay\Gateway\Request\AuthorizationRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Conotoxia\Pay\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ConotoxiaPayConfig</argument>
+            <argument name="storeManager" xsi:type="object">Magento\Store\Model\StoreManagerInterface</argument>
+        </arguments>
+    </type>
+
+    <!-- Capture command -->
+    <virtualType name="ConotoxiaPayCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Conotoxia\Pay\Gateway\Request\CaptureRequest</argument>
+            <argument name="handler" xsi:type="object">Conotoxia\Pay\Gateway\Response\CaptureHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Conotoxia\Pay\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Conotoxia\Pay\Gateway\Http\Client\CaptureClient</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request -->
+    <type name="Conotoxia\Pay\Gateway\Request\CaptureRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">ConotoxiaPayConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Response handlers -->
+    <virtualType name="ConotoxiaPayResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="txnid" xsi:type="string">Conotoxia\Pay\Gateway\Response\TxnIdHandler</item>
+                <item name="fraud" xsi:type="string">Conotoxia\Pay\Gateway\Response\FraudHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="ConotoxiaPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="title" xsi:type="string">Conotoxia\Pay\Gateway\Handler\TitleHandler</item>
+                <item name="default" xsi:type="string">ConotoxiaPayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="ConotoxiaPayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">ConotoxiaPayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Helpers -->
+    <type name="Conotoxia\Pay\Helper\KeyPairGenerator">
+        <arguments>
+            <argument name="logger" xsi:type="object">Conotoxia\Pay\Logger\Logger</argument>
+            <argument name="messageManager" xsi:type="object">Magento\Framework\Message\ManagerInterface</argument>
+        </arguments>
+    </type>
+
+    <type name="Conotoxia\Pay\Helper\OrderHelper">
+        <arguments>
+            <argument name="orderRepository" xsi:type="object">Magento\Sales\Api\OrderRepositoryInterface</argument>
+            <argument name="searchCriteriaBuilder" xsi:type="object">Magento\Framework\Api\SearchCriteriaBuilder</argument>
+        </arguments>
+    </type>
+
+    <type name="Conotoxia\Pay\Helper\AssetHelper">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\Framework\App\Helper\Context</argument>
+            <argument name="assetRepository" xsi:type="object">Magento\Framework\View\Asset\Repository</argument>
+            <argument name="localeResolver" xsi:type="object">Magento\Framework\Locale\Resolver</argument>
+        </arguments>
+    </type>
+
+    <type name="Conotoxia\Pay\Logger\Handler\Client">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Conotoxia\Pay\Logger\Handler\Async">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Conotoxia\Pay\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">ConotoxiaPayLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Conotoxia\Pay\Logger\Handler\Client</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Conotoxia\Pay\Logger\AsyncLogger">
+        <arguments>
+            <argument name="name" xsi:type="string">AsyncConotoxiaPayLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Conotoxia\Pay\Logger\Handler\Async</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

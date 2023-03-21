@@ -1,0 +1,18 @@
+<?php
+/**
+ * @var Conotoxia\Pay\Block\Memo\Memo $block
+ */
+?>
+
+<div class="alert alert-info">
+    <p>
+        <?= __('You can also request a refund in the') ?>
+        <a href="<?= $block->getRefundFormUrl() ?>"><?= __('Merchant\'s Panel') ?></a>.
+    </p>
+</div>
+<div class="alert alert-info">
+    <p>
+        <?= __('To check the price list of refunds, go') ?>
+        <a href="<?= $block->getPriceListUrl() ?>"><?= __('here') ?></a>.
+    </p>
+</div>

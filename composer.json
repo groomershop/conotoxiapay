@@ -1,0 +1,23 @@
+{
+    "name": "magento/conotoxiapay",
+    "type": "magento2-module",
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "magento/module-sales": "103.0.*"
+    },
+    "authors": [
+        {
+            "name": "Vatu-Team",
+            "email": "vatu@cinkciarz.pl"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Conotoxia\\Pay\\": ""
+        }
+    }
+}

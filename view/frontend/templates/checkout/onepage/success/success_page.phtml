@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var Conotoxia\Pay\Block\Checkout\Onepage\Success\Success $block
+ */
+
+use Conotoxia\Pay\Api\PaymentResults;
+
+?>
+<?php
+if ($block->isValid()):
+    $block->initialize() ?>
+    <div class="col-xl-5 conotoxia-success-container">
+        <div class="conotoxia-payment-status-box">
+            <div class="row">
+                <div class="conotoxia-success-logo">
+                    <img src="<?= $block->getConotoxiaPayLogo() ?>" id="conpayStatusLogo"
+                         alt="<?= __('Conotoxia Pay Logo') ?>">
+                </div>
+                <h3 style="text-align: center">
+                    <?= __('Thank you for choosing Conotoxia Pay') ?>
+                </h3>
+
+                <div style="text-align: center">
+                    <?= __('Payment number: %1', $block->getPaymentId()) ?>
+                    <br/>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12" style="height:15px">
+                    </div>
+                </div>
+                <?php if ($block->getPaymentResult() == PaymentResults::SUCCESS): ?>
+                    <div class="message message-success success conotoxia-message">
+                        <?= __('Status: Payment completed.') ?>
+                    </div>
+                <?php elseif ($block->getPaymentResult() == PaymentResults::SUCCESS_WITH_PAY_LATER): ?>
+                    <div class="message message-success success conotoxia-message">
+                        <?= __('Status: Payment pending.') ?>
+                    </div>
+                <?php elseif ($block->getPaymentResult() == PaymentResults::REJECTED): ?>
+                    <div class="message message-warning warning conotoxia-message">
+                        <?= __('Status: Payment rejected.') ?>
+                    </div>
+                <?php elseif ($block->getPaymentResult() == PaymentResults::ERROR): ?>
+                    <div class="message message-warning warning conotoxia-message">
+                        <?= __('Status: Payment error.') ?>
+                    </div>
+                <?php elseif ($block->getPaymentResult() == PaymentResults::OTHER): ?>
+                    <div class="message message-warning warning conotoxia-message">
+                        <?= __('An unexpected error has occurred. Contact our store support.') ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+<?php
+endif;
